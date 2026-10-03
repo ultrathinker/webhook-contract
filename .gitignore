@@ -1,0 +1,61 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.key
+*.keystore
+*.p12
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# AI agent context files (never commit)
+CLAUDE.md
+AGENTS.md
+QWEN.md
+GEMINI.md
+.cursorrules
+.cursor/
+.aider*
+
+# Internal working material: task briefs, reviews, reports, handovers (never commit)
+docs/tasks/
+docs/reviews/
+*-review-*.md
+*REVIEW*.md
+*-handover.md
+_docs/
+_reports/
+_planning/
+_prompt*.txt
+_status*.txt
+_*.log
+_claude_*.md
+_kilo_*.md
+_publication_report.md
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Node
+node_modules/
+
+# Editors
+.vscode/
+.idea/
+
+# Local data
+*.db
+*.sqlite
+*.sqlite3
+
+# Scratch output; the test suite builds its workspaces in the system
+# temporary directory, but keep local experiments out of git anyway
+tmp/

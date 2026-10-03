@@ -1,0 +1,82 @@
+{
+  "contract_version": 1,
+  "provider": "example-pay",
+  "notes": "Example contract for a Stripe-shaped payment provider. Copy into your repo as tests/webhooks/webhook-contract.json and adapt.",
+  "fields": {
+    "id": "body.id",
+    "type": "body.type",
+    "delivery_id": "header.x-delivery-id"
+  },
+  "ack": {
+    "success": [200],
+    "ignored": [200],
+    "malformed": [400]
+  },
+  "sequence_field": "body.data.object.attempt",
+  "scenarios": [
+    "duplicate",
+    "retry_after_failure",
+    "out_of_order",
+    "cross_key_interleave",
+    "unknown_type",
+    "malformed"
+  ],
+  "events": [
+    {
+      "type": "invoice.paid",
+      "description": "Fires when an invoice payment succeeds. Retried with the same event id until acknowledged.",
+      "ordering_key": "body.data.object.id",
+      "ordered_payloads": [
+        {
+          "id": "evt_test_0001",
+          "type": "invoice.paid",
+          "data": {
+            "object": {
+              "id": "in_test_0001",
+              "attempt": 1,
+              "amount_paid": 4200,
+              "currency": "usd"
+            }
+          }
+        },
+        {
+          "id": "evt_test_0002",
+          "type": "invoice.paid",
+          "data": {
+            "object": {
+              "id": "in_test_0001",
+              "attempt": 2,
+              "amount_paid": 4200,
+              "currency": "usd"
+            }
+          }
+        }
+      ],
+      "payload": {
+        "id": "evt_test_0001",
+        "type": "invoice.paid",
+        "data": {
+          "object": {
+            "id": "in_test_0001",
+            "attempt": 2,
+            "amount_paid": 4200,
+            "currency": "usd"
+          }
+        }
+      },
+      "side_effects": [
+        {
+          "name": "mark_invoice_paid",
+          "idempotent": true,
+          "guard": "Conditional UPDATE ... WHERE status != 'paid'; repeating it is a no-op."
+        },
+        {
+          "name": "send_receipt_email",
+          "idempotent": false,
+          "guard": "Sent only inside the same transaction/guard as mark_invoice_paid; the status guard prevents a second email."
+        }
+      ],
+      "skip_scenarios": []
+    }
+  ]
+}

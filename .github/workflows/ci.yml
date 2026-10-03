@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, python ${{ matrix.versions.python }}, node ${{ matrix.versions.node }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        # The oldest and the newest versions the plugin supports: the CLI needs
+        # Python 3.9+, the JavaScript harness needs Node 18+.
+        versions:
+          - { python: "3.9", node: "18" }
+          - { python: "3.13", node: "22" }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.versions.python }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.versions.node }}
+      # The plugin has no dependencies, so there is nothing to install.
+      # The tests that run the generated JavaScript harness need Node and skip without it.
+      - name: Run the tests
+        run: python -m unittest discover -s tests -t . -v

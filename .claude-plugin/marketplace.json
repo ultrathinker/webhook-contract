@@ -1,0 +1,14 @@
+{
+  "name": "webhook-contract",
+  "owner": {
+    "name": "ultrathinker"
+  },
+  "description": "Make webhook handlers safe against duplicates, retries and out-of-order events.",
+  "plugins": [
+    {
+      "name": "webhook-contract",
+      "source": ".",
+      "description": "Write a provider-neutral delivery contract, generate synthetic replay fixtures from it, and check your handler against duplicate, retry and out-of-order deliveries, with a read-only auditor agent."
+    }
+  ]
+}

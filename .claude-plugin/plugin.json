@@ -1,0 +1,20 @@
+{
+  "name": "webhook-contract",
+  "version": "0.1.0",
+  "description": "Provider-neutral delivery contracts and synthetic replay fixtures that make webhook handlers robust against duplicates, retries and out-of-order events.",
+  "author": {
+    "name": "ultrathinker"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/ultrathinker/webhook-contract",
+  "homepage": "https://github.com/ultrathinker/webhook-contract",
+  "documentationUrl": "https://github.com/ultrathinker/webhook-contract#readme",
+  "supportUrl": "https://github.com/ultrathinker/webhook-contract/issues",
+  "privacyPolicyUrl": "https://github.com/ultrathinker/webhook-contract/blob/main/PRIVACY.md",
+  "keywords": [
+    "webhooks",
+    "idempotency",
+    "testing",
+    "reliability"
+  ]
+}

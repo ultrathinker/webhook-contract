@@ -1,0 +1,55 @@
+{
+  "contract_version": 1,
+  "provider": "github",
+  "description": "GitHub-style header-keyed provider. The event type and the delivery identity both arrive as headers, the body carries no event id and no integer ordering field - so the order scenarios are skipped honestly (GitHub documents no per-entity sequence you can order by). X-GitHub-Delivery is the dedupe key: a redelivery keeps the same value.",
+  "fields": {
+    "id": "header.x-github-delivery",
+    "type": "header.x-github-event",
+    "delivery_id": "header.x-github-delivery"
+  },
+  "ack": {
+    "success": [200],
+    "ignored": [200],
+    "malformed": [400]
+  },
+  "scenarios": [
+    "duplicate",
+    "retry_after_failure",
+    "out_of_order",
+    "cross_key_interleave",
+    "unknown_type",
+    "malformed"
+  ],
+  "events": [
+    {
+      "type": "push",
+      "ordering_key": "body.repository.id",
+      "skip_scenarios": ["out_of_order", "cross_key_interleave"],
+      "side_effects": [
+        {
+          "name": "enqueue_ci_build",
+          "idempotent": true,
+          "guard": "dedupe on X-GitHub-Delivery before enqueueing"
+        },
+        {
+          "name": "refresh_branch_cache",
+          "idempotent": false,
+          "guard": "conditional UPDATE of the cached branch head, only when the stored head differs"
+        }
+      ],
+      "payload": {
+        "ref": "refs/heads/main",
+        "before": "0000000000000000000000000000000000000000",
+        "after": "dec0de000000",
+        "repository": {
+          "id": 76132,
+          "name": "example-repo",
+          "full_name": "octocat/example-repo"
+        },
+        "pusher": {
+          "name": "octocat"
+        }
+      }
+    }
+  ]
+}
